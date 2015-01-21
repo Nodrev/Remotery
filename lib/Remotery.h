@@ -114,9 +114,15 @@ documented just below this comment.
 #endif
 
 
+// Avoid "unused variable" warnings
+#define RMT_UNUSED_PARAMETER(parameter)
+
+
 // Public interface is written in terms of these macros to easily enable/disable itself
 #define RMT_OPTIONAL(macro, x) IFDEF_ ## macro(x, )
 #define RMT_OPTIONAL_RET(macro, x, y) IFDEF_ ## macro(x, (y))
+#define RMT_OPTIONAL_WITH_PARAMETER(macro, x, parameter) IFDEF_ ## macro(x, RMT_UNUSED_PARAMETER(parameter))
+#define RMT_OPTIONAL_WITH_PARAMETER_RET(macro, x, y, parameter) IFDEF_ ## macro(x, (y));RMT_UNUSED_PARAMETER(parameter)
 
 
 
@@ -240,7 +246,7 @@ typedef enum rmtError
     RMT_OPTIONAL_RET(RMT_ENABLED, _rmt_Settings(), NULL )
 
 #define rmt_CreateGlobalInstance(rmt)                                               \
-    RMT_OPTIONAL_RET(RMT_ENABLED, _rmt_CreateGlobalInstance(rmt), RMT_ERROR_NONE)
+    RMT_OPTIONAL_WITH_PARAMETER_RET(RMT_ENABLED, _rmt_CreateGlobalInstance(rmt), RMT_ERROR_NONE, rmt)
 
 #define rmt_DestroyGlobalInstance(rmt)                                              \
     RMT_OPTIONAL(RMT_ENABLED, _rmt_DestroyGlobalInstance(rmt))
